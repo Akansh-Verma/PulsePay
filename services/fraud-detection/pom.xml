@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.pulsepay</groupId>
+        <groupId>dev.pulsepay</groupId>
         <artifactId>pulsepay-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../pulsepay/pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>fraud-detection</artifactId>
