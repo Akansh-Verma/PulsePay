@@ -1,0 +1,103 @@
+{
+  "type": "record",
+  "name": "NotificationRequestEvent",
+  "namespace": "dev.pulsepay.events.notification",
+  "doc": "Published to notification.requests topic to trigger user or merchant notifications.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "dev.pulsepay.events.PulsePayEventMetadata"
+    },
+    {
+      "name": "notificationId",
+      "type": "string",
+      "doc": "Unique identifier for this notification request."
+    },
+    {
+      "name": "recipientType",
+      "type": {
+        "type": "enum",
+        "name": "RecipientType",
+        "symbols": ["USER", "MERCHANT", "ADMIN"]
+      }
+    },
+    {
+      "name": "recipientId",
+      "type": "string",
+      "doc": "ID of the user, merchant, or admin to notify."
+    },
+    {
+      "name": "channel",
+      "type": {
+        "type": "enum",
+        "name": "NotificationChannel",
+        "symbols": ["PUSH", "SMS", "EMAIL", "WHATSAPP", "IN_APP"],
+        "doc": "IN_APP is rendered inside the mobile or web app without an external provider."
+      }
+    },
+    {
+      "name": "templateId",
+      "type": "string",
+      "doc": "Template identifier in the notification template registry."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "doc": "BCP 47 locale code e.g. en-IN, hi-IN."
+    },
+    {
+      "name": "variables",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "doc": "Template variable substitution map. All values serialised as strings."
+    },
+    {
+      "name": "priority",
+      "type": [
+        "null",
+        {
+          "type": "enum",
+          "name": "NotificationPriority",
+          "symbols": ["LOW", "NORMAL", "HIGH"]
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "scheduledAt",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "RFC3339 timestamp for scheduled delivery. Null = deliver immediately."
+    },
+    {
+      "name": "expiresAt",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Hard expiry deadline. Notification-service must discard and emit audit event if this timestamp has passed."
+    },
+    {
+      "name": "retryPolicy",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "RetryPolicy",
+          "fields": [
+            { "name": "maxAttempts", "type": "int", "doc": "Maximum delivery attempts including the first try." },
+            { "name": "backoffSeconds", "type": "int", "doc": "Base backoff in seconds. Doubles on each retry." }
+          ]
+        }
+      ],
+      "default": null,
+      "doc": "Override the service-default retry behaviour. Null = use service default."
+    },
+    {
+      "name": "deduplicationKey",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Idempotency key scoped to recipient + channel. Suppresses duplicate deliveries within a 24-hour window."
+    }
+  ]
+}

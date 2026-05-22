@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: payment-service
+  kafka:
+    bootstrap-servers: localhost:9092
+
+server:
+  port: 8082

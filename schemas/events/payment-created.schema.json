@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepay.dev/schemas/events/payment-created.schema.json",
+  "title": "PaymentCreatedEvent",
+  "description": "Event published when a payment is initiated and persisted. Supports UPI, CARD, WALLET, BNPL, NEFT, and IMPS rails.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "payload"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "./event-metadata.schema.json"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "paymentId",
+        "userId",
+        "merchantId",
+        "amount",
+        "currency",
+        "rail",
+        "status",
+        "idempotencyKey"
+      ],
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "merchantId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "rail": {
+          "type": "string",
+          "enum": [
+            "UPI",
+            "CARD",
+            "WALLET",
+            "BNPL",
+            "NEFT",
+            "IMPS"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "INITIATED",
+            "PROCESSING",
+            "SUCCESS",
+            "FAILED"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "customerVpa": {
+          "type": "string",
+          "minLength": 3
+        },
+        "providerReference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "failureCode": {
+          "type": "string",
+          "description": "Machine-readable failure code when status is FAILED. E.g. INSUFFICIENT_FUNDS, BANK_TIMEOUT, INVALID_VPA.",
+          "minLength": 1
+        },
+        "failureReason": {
+          "type": "string",
+          "description": "Human-readable failure description for logging and support tooling.",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

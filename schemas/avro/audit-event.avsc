@@ -1,0 +1,114 @@
+{
+  "type": "record",
+  "name": "AuditEvent",
+  "namespace": "dev.pulsepay.events.audit",
+  "doc": "Immutable audit record published by any service on state-changing actions.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "dev.pulsepay.events.PulsePayEventMetadata"
+    },
+    {
+      "name": "auditId",
+      "type": "string",
+      "doc": "Unique identifier for this audit record."
+    },
+    {
+      "name": "serviceName",
+      "type": "string",
+      "doc": "Service that performed the audited action."
+    },
+    {
+      "name": "action",
+      "type": "string",
+      "doc": "Action performed e.g. PAYMENT_INITIATED, USER_KYC_SUBMITTED."
+    },
+    {
+      "name": "entityType",
+      "type": "string",
+      "doc": "Type of entity affected e.g. Payment, Wallet, User."
+    },
+    {
+      "name": "entityId",
+      "type": "string",
+      "doc": "ID of the affected entity."
+    },
+    {
+      "name": "actorType",
+      "type": {
+        "type": "enum",
+        "name": "ActorType",
+        "symbols": ["SYSTEM", "USER", "SERVICE"],
+        "doc": "SYSTEM = internal automated process. USER = authenticated end-user. SERVICE = microservice caller."
+      }
+    },
+    {
+      "name": "actorId",
+      "type": "string",
+      "doc": "ID of the actor performing the action."
+    },
+    {
+      "name": "result",
+      "type": {
+        "type": "enum",
+        "name": "AuditResult",
+        "symbols": ["SUCCESS", "FAILURE"]
+      }
+    },
+    {
+      "name": "recordedAt",
+      "type": "string",
+      "doc": "RFC3339 timestamp of when the action was recorded."
+    },
+    {
+      "name": "reason",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Optional reason, especially for FAILURE results."
+    },
+    {
+      "name": "ipAddress",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Client IP address. Required for USER actor events for PCI-DSS compliance."
+    },
+    {
+      "name": "sessionId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Authenticated session ID. Required for USER actor events."
+    },
+    {
+      "name": "userAgent",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "HTTP User-Agent string. Stored for forensic analysis."
+    },
+    {
+      "name": "environment",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Deployment environment e.g. production, staging."
+    },
+    {
+      "name": "changes",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": {
+            "type": "record",
+            "name": "FieldChange",
+            "fields": [
+              { "name": "field", "type": "string", "doc": "Name of the changed field." },
+              { "name": "before", "type": ["null", "string"], "default": null, "doc": "Serialised value before change. Null if newly created." },
+              { "name": "after", "type": ["null", "string"], "default": null, "doc": "Serialised value after change. Null if deleted." }
+            ]
+          }
+        }
+      ],
+      "default": null,
+      "doc": "Structured field-level change log."
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepay.dev/schemas/events/dead-letter-event.schema.json",
+  "title": "DeadLetterEvent",
+  "description": "Envelope wrapping any event that could not be processed by a consumer. Published to the <original-topic>.dlq Kafka topic. Enables reprocessing, alerting, and compliance audit of failed messages.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dlqEventId",
+    "originalTopic",
+    "originalPartition",
+    "originalOffset",
+    "consumerGroup",
+    "consumerService",
+    "failureReason",
+    "failureType",
+    "failedAt",
+    "attemptCount",
+    "originalPayload"
+  ],
+  "properties": {
+    "dlqEventId": {
+      "type": "string",
+      "description": "Unique identifier for this dead-letter record.",
+      "minLength": 1
+    },
+    "originalTopic": {
+      "type": "string",
+      "description": "Kafka topic the message was originally consumed from.",
+      "minLength": 1
+    },
+    "originalPartition": {
+      "type": "integer",
+      "description": "Kafka partition the message was consumed from.",
+      "minimum": 0
+    },
+    "originalOffset": {
+      "type": "integer",
+      "description": "Kafka offset of the original message.",
+      "minimum": 0
+    },
+    "originalEventId": {
+      "type": "string",
+      "description": "metadata.eventId of the original event, if the message was parseable.",
+      "minLength": 1
+    },
+    "originalEventType": {
+      "type": "string",
+      "description": "metadata.eventType of the original event, if the message was parseable.",
+      "minLength": 1
+    },
+    "originalEventVersion": {
+      "type": "integer",
+      "description": "metadata.eventVersion of the original event, if the message was parseable.",
+      "minimum": 1
+    },
+    "consumerGroup": {
+      "type": "string",
+      "description": "Kafka consumer group that failed to process the message.",
+      "minLength": 1
+    },
+    "consumerService": {
+      "type": "string",
+      "description": "Microservice name that failed to process the message.",
+      "minLength": 1
+    },
+    "failureType": {
+      "type": "string",
+      "description": "SCHEMA_VALIDATION = message failed JSON Schema validation. DESERIALIZATION = Avro/JSON parse error. BUSINESS_RULE = schema was valid but business logic rejected it. DOWNSTREAM_TIMEOUT = a downstream call timed out. UNKNOWN = unclassified.",
+      "enum": [
+        "SCHEMA_VALIDATION",
+        "DESERIALIZATION",
+        "BUSINESS_RULE",
+        "DOWNSTREAM_TIMEOUT",
+        "UNKNOWN"
+      ]
+    },
+    "failureReason": {
+      "type": "string",
+      "description": "Human-readable description of why processing failed. Include exception class and message.",
+      "minLength": 1
+    },
+    "validationErrors": {
+      "type": "array",
+      "description": "Structured validation errors, populated when failureType is SCHEMA_VALIDATION.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instancePath",
+          "message"
+        ],
+        "properties": {
+          "instancePath": {
+            "type": "string",
+            "description": "JSON Pointer to the failing field, e.g. /payload/rail."
+          },
+          "message": {
+            "type": "string",
+            "description": "Validation error message."
+          },
+          "schemaPath": {
+            "type": "string",
+            "description": "JSON Pointer into the schema where the rule is defined."
+          }
+        }
+      }
+    },
+    "failedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the failure occurred."
+    },
+    "attemptCount": {
+      "type": "integer",
+      "description": "Number of delivery attempts made before routing to DLQ, including this final attempt.",
+      "minimum": 1
+    },
+    "originalPayload": {
+      "type": "string",
+      "description": "Raw original message body as a base64-encoded string. Always captured regardless of whether parsing succeeded, enabling replay."
+    },
+    "traceId": {
+      "type": "string",
+      "description": "Distributed trace ID from the original event, if extractable.",
+      "minLength": 1
+    }
+  }
+}

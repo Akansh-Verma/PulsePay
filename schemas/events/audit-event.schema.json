@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepay.dev/schemas/events/audit-event.schema.json",
+  "title": "AuditEvent",
+  "description": "Immutable audit record for state-changing actions across services.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "payload"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "./event-metadata.schema.json"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "auditId",
+        "serviceName",
+        "action",
+        "entityType",
+        "entityId",
+        "actorType",
+        "actorId",
+        "result",
+        "recordedAt"
+      ],
+      "properties": {
+        "auditId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "serviceName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entityType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entityId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actorType": {
+          "type": "string",
+          "description": "SYSTEM = internal automated process. USER = authenticated end-user. SERVICE = authenticated microservice calling another.",
+          "enum": [
+            "SYSTEM",
+            "USER",
+            "SERVICE"
+          ]
+        },
+        "actorId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "SUCCESS",
+            "FAILURE"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recordedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ipAddress": {
+          "type": "string",
+          "description": "IPv4 or IPv6 address of the actor at the time of the action. Required for USER actor events for PCI-DSS compliance. Omitted for SYSTEM and SERVICE actors.",
+          "minLength": 7
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Authenticated session ID of the actor. Required for USER actor events. Enables session-level audit trail reconstruction.",
+          "minLength": 1
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "field"
+            ],
+            "properties": {
+              "field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "before": {
+                "description": "Field value before the change. Null if the field was newly created."
+              },
+              "after": {
+                "description": "Field value after the change. Null if the field was deleted."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

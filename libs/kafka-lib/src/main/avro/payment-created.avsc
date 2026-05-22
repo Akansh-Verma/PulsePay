@@ -1,0 +1,92 @@
+{
+  "type": "record",
+  "name": "PaymentCreatedEvent",
+  "namespace": "dev.pulsepay.events.payment",
+  "doc": "Published by payment-service when a payment is initiated and persisted.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "dev.pulsepay.events.PulsePayEventMetadata",
+      "doc": "Shared event metadata."
+    },
+    {
+      "name": "paymentId",
+      "type": "string",
+      "doc": "Unique payment identifier."
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "User who initiated the payment."
+    },
+    {
+      "name": "merchantId",
+      "type": "string",
+      "doc": "Merchant receiving the payment."
+    },
+    {
+      "name": "amount",
+      "type": "double",
+      "doc": "Payment amount. Must be greater than zero."
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "doc": "ISO 4217 currency code e.g. INR."
+    },
+    {
+      "name": "rail",
+      "type": {
+        "type": "enum",
+        "name": "PaymentRail",
+        "symbols": ["UPI", "CARD", "WALLET", "BNPL", "NEFT", "IMPS", "UNKNOWN"],
+        "doc": "Payment rail used. Consumers must treat UNKNOWN as a no-op."
+      },
+      "doc": "Payment rail used for this transaction."
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "PaymentStatus",
+        "symbols": ["INITIATED", "PROCESSING", "SUCCESS", "FAILED", "CANCELLED", "TIMED_OUT"],
+        "doc": "Current payment status."
+      }
+    },
+    {
+      "name": "idempotencyKey",
+      "type": "string",
+      "doc": "Client-supplied idempotency key. Checked against Redis before processing."
+    },
+    {
+      "name": "description",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Human-readable payment description."
+    },
+    {
+      "name": "customerVpa",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Customer UPI VPA e.g. user@okaxis. Present for UPI rail only."
+    },
+    {
+      "name": "providerReference",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Payment provider transaction reference."
+    },
+    {
+      "name": "failureCode",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Machine-readable failure code when status is FAILED or CANCELLED. E.g. INSUFFICIENT_FUNDS, BANK_TIMEOUT."
+    },
+    {
+      "name": "failureReason",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Human-readable failure description for logging and support tooling. Never expose to end users."
+    }
+  ]
+}

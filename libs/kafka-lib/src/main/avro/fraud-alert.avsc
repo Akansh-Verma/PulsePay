@@ -1,0 +1,77 @@
+{
+  "type": "record",
+  "name": "FraudAlertEvent",
+  "namespace": "dev.pulsepay.events.fraud",
+  "doc": "Published by fraud-detection service when a payment is flagged.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "dev.pulsepay.events.PulsePayEventMetadata"
+    },
+    {
+      "name": "alertId",
+      "type": "string",
+      "doc": "Unique identifier for this fraud alert."
+    },
+    {
+      "name": "paymentId",
+      "type": "string",
+      "doc": "Payment that triggered this alert."
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "User associated with the flagged payment."
+    },
+    {
+      "name": "severity",
+      "type": {
+        "type": "enum",
+        "name": "FraudSeverity",
+        "symbols": ["LOW", "MEDIUM", "HIGH", "CRITICAL", "UNKNOWN"],
+        "doc": "Consumers must treat UNKNOWN as MEDIUM for safe fallback."
+      }
+    },
+    {
+      "name": "decision",
+      "type": {
+        "type": "enum",
+        "name": "FraudDecision",
+        "symbols": ["ALLOW", "REVIEW", "BLOCK", "CHALLENGE", "UNKNOWN"],
+        "doc": "CHALLENGE = step-up auth required. Consumers must treat UNKNOWN as REVIEW."
+      }
+    },
+    {
+      "name": "riskScore",
+      "type": "double",
+      "doc": "Composite risk score between 0.0 (no risk) and 1.0 (certain fraud). Required."
+    },
+    {
+      "name": "triggeredAt",
+      "type": "string",
+      "doc": "RFC3339 timestamp of when the alert was raised."
+    },
+    {
+      "name": "ruleHits",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "RuleHit",
+          "fields": [
+            { "name": "ruleCode", "type": "string", "doc": "Unique rule identifier." },
+            { "name": "description", "type": "string", "doc": "Human-readable rule description." },
+            { "name": "weight", "type": "double", "doc": "Rule contribution weight. Required for consistent re-scoring of historical events." }
+          ]
+        }
+      },
+      "doc": "List of rules that fired. Must contain at least one entry."
+    },
+    {
+      "name": "accountId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Bank account or instrument under evaluation. Used for account-level velocity checks."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: fraud-detection
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+    consumer:
+      group-id: fraud-detection-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+server:
+  port: 8086
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss} [%X{traceId}] [%X{correlationId}] %-5level %logger{36} - %msg%n"

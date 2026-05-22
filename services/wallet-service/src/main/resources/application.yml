@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: wallet-service
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+    consumer:
+      group-id: wallet-service-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pulsepay_wallet
+    username: pulsepay
+    password: changeme
+
+server:
+  port: 8083
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss} [%X{traceId}] [%X{correlationId}] %-5level %logger{36} - %msg%n"

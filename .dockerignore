@@ -1,0 +1,14 @@
+.git
+**/.git
+**/target
+.idea
+.vscode
+**/node_modules
+graphify-out
+.kiro
+pulsepay
+*.docx
+dependency_tree.txt
+extract_ast.py
+.graphify_detect.json
+.graphify_python

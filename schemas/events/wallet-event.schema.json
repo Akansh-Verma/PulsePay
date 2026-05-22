@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepay.dev/schemas/events/wallet-event.schema.json",
+  "title": "WalletEvent",
+  "description": "Event published after wallet ledger activity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "payload"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "./event-metadata.schema.json"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "walletEventId",
+        "walletId",
+        "userId",
+        "entryType",
+        "amount",
+        "currency",
+        "balanceAfter",
+        "status"
+      ],
+      "properties": {
+        "walletEventId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "walletId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paymentId": {
+          "type": "string",
+          "description": "Reference to the originating payment. Omitted for direct top-ups and manual adjustments.",
+          "minLength": 1
+        },
+        "entryType": {
+          "type": "string",
+          "description": "Direction of the ledger entry. TOPUP is a direct wallet load with no associated payment.",
+          "enum": [
+            "DEBIT",
+            "CREDIT",
+            "REVERSAL",
+            "TOPUP"
+          ]
+        },
+        "amount": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "balanceAfter": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "POSTED",
+            "DECLINED",
+            "REVERSED"
+          ]
+        },
+        "reasonCode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "merchantId": {
+          "type": "string",
+          "description": "Merchant associated with the originating payment. Required for settlement reconciliation. Omitted for top-ups.",
+          "minLength": 1
+        },
+        "feeAmount": {
+          "type": "number",
+          "description": "Platform fee deducted from this transaction, in the same currency. Zero if no fee applies.",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

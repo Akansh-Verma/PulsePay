@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: fraud-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: fraud-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: http://localhost:8081
+        specific.avro.reader: true
+
+server:
+  port: 8085
+
+fraud:
+  detection:
+    threshold: 10000.0  # Amount threshold for fraud detection

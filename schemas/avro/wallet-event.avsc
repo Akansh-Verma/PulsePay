@@ -1,0 +1,97 @@
+{
+  "type": "record",
+  "name": "WalletEvent",
+  "namespace": "dev.pulsepay.events.wallet",
+  "doc": "Published by wallet-service after a ledger entry is posted.",
+  "fields": [
+    {
+      "name": "metadata",
+      "type": "dev.pulsepay.events.PulsePayEventMetadata",
+      "doc": "Shared event metadata."
+    },
+    {
+      "name": "walletEventId",
+      "type": "string",
+      "doc": "Unique identifier for this ledger entry event."
+    },
+    {
+      "name": "walletId",
+      "type": "string",
+      "doc": "Wallet that was debited or credited."
+    },
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "Owner of the wallet."
+    },
+    {
+      "name": "entryType",
+      "type": {
+        "type": "enum",
+        "name": "WalletEntryType",
+        "symbols": ["DEBIT", "CREDIT", "REVERSAL", "TOPUP"],
+        "doc": "TOPUP = direct wallet load with no associated payment."
+      }
+    },
+    {
+      "name": "amount",
+      "type": "double",
+      "doc": "Ledger entry amount. Always positive; direction is determined by entryType."
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "doc": "ISO 4217 currency code."
+    },
+    {
+      "name": "balanceAfter",
+      "type": "double",
+      "doc": "Wallet balance after this entry was posted."
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "WalletEntryStatus",
+        "symbols": ["POSTED", "DECLINED", "REVERSED"]
+      }
+    },
+    {
+      "name": "paymentId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Originating payment ID. Absent for TOPUP and manual adjustment entries."
+    },
+    {
+      "name": "merchantId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Merchant associated with the originating payment. Required by report-service for settlement. Absent for top-ups."
+    },
+    {
+      "name": "feeAmount",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Platform fee deducted from this transaction in the same currency. Zero if no fee applies."
+    },
+    {
+      "name": "initiatedBy",
+      "type": [
+        "null",
+        {
+          "type": "enum",
+          "name": "WalletInitiator",
+          "symbols": ["USER", "SYSTEM", "MERCHANT", "REFUND_ENGINE"]
+        }
+      ],
+      "default": null,
+      "doc": "Actor that triggered this wallet entry."
+    },
+    {
+      "name": "reasonCode",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Optional reason code for DECLINED or REVERSED entries."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# Ignore graphify output and graphify folder
+graphify/
+graphify-out/
+.kiro/
+.vscode/
+.graphify_detect.json
+.graphify_python
+dependency_tree.txt
+extract_ast.py
+run_graphify.py
+*.jar
+*.jar.*
+
+target/
+**/target/

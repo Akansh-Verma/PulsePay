@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: audit-service
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      schema.registry.url: http://localhost:8081
+    consumer:
+      group-id: audit-service-payment-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/pulsepay_audit
+
+server:
+  port: 8088
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss} [%X{traceId}] [%X{correlationId}] %-5level %logger{36} - %msg%n"

@@ -1,0 +1,123 @@
+{
+  "type": "record",
+  "name": "DeadLetterEvent",
+  "namespace": "dev.pulsepay.events.dlq",
+  "doc": "Wraps any Kafka message that failed processing and was routed to a DLQ topic.",
+  "fields": [
+    {
+      "name": "dlqEventId",
+      "type": "string",
+      "doc": "Unique identifier for this DLQ record."
+    },
+    {
+      "name": "originalTopic",
+      "type": "string",
+      "doc": "Kafka topic the message was originally consumed from."
+    },
+    {
+      "name": "originalPartition",
+      "type": "int",
+      "doc": "Kafka partition of the original message."
+    },
+    {
+      "name": "originalOffset",
+      "type": "long",
+      "doc": "Kafka offset of the original message."
+    },
+    {
+      "name": "consumerGroup",
+      "type": "string",
+      "doc": "Kafka consumer group that failed to process the message."
+    },
+    {
+      "name": "consumerService",
+      "type": "string",
+      "doc": "Microservice name that owns the failing consumer."
+    },
+    {
+      "name": "failureType",
+      "type": {
+        "type": "enum",
+        "name": "DlqFailureType",
+        "symbols": ["SCHEMA_VALIDATION", "DESERIALIZATION", "BUSINESS_RULE", "DOWNSTREAM_TIMEOUT", "UNKNOWN"]
+      },
+      "doc": "Machine-readable failure classification."
+    },
+    {
+      "name": "failureReason",
+      "type": "string",
+      "doc": "Human-readable description of why processing failed."
+    },
+    {
+      "name": "failedAt",
+      "type": "string",
+      "doc": "RFC3339 timestamp of when the failure occurred."
+    },
+    {
+      "name": "attemptCount",
+      "type": "int",
+      "doc": "Number of processing attempts including the final failing attempt."
+    },
+    {
+      "name": "originalPayload",
+      "type": "bytes",
+      "doc": "Raw original Kafka message value as bytes. Preserved exactly as received for replay."
+    },
+    {
+      "name": "originalEventId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "metadata.eventId from the original message, if extractable."
+    },
+    {
+      "name": "originalEventType",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "metadata.eventType from the original message, if extractable."
+    },
+    {
+      "name": "originalEventVersion",
+      "type": ["null", "int"],
+      "default": null,
+      "doc": "metadata.eventVersion from the original message, if extractable."
+    },
+    {
+      "name": "traceId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Distributed trace ID from the original event, if extractable."
+    },
+    {
+      "name": "validationErrors",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": {
+            "type": "record",
+            "name": "ValidationError",
+            "fields": [
+              { "name": "instancePath", "type": "string", "doc": "JSON Pointer to the failing field e.g. /payload/rail." },
+              { "name": "message", "type": "string", "doc": "Validation error message." },
+              { "name": "schemaPath", "type": ["null", "string"], "default": null, "doc": "JSON Pointer into the schema where the rule is defined." }
+            ]
+          }
+        }
+      ],
+      "default": null,
+      "doc": "Structured validation errors. Populated when failureType is SCHEMA_VALIDATION."
+    },
+    {
+      "name": "rawHeaders",
+      "type": [
+        "null",
+        {
+          "type": "map",
+          "values": "string"
+        }
+      ],
+      "default": null,
+      "doc": "Kafka message headers at time of failure as key-value string pairs."
+    }
+  ]
+}

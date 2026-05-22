@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepay.dev/schemas/events/notification-request.schema.json",
+  "title": "NotificationRequestEvent",
+  "description": "Request event for dispatching user or merchant notifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "payload"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "./event-metadata.schema.json"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notificationId",
+        "recipientType",
+        "recipientId",
+        "channel",
+        "templateId",
+        "locale",
+        "variables"
+      ],
+      "properties": {
+        "notificationId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recipientType": {
+          "type": "string",
+          "enum": [
+            "USER",
+            "MERCHANT",
+            "ADMIN"
+          ]
+        },
+        "recipientId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "PUSH",
+            "SMS",
+            "EMAIL",
+            "WHATSAPP",
+            "IN_APP"
+          ]
+        },
+        "templateId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locale": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$"
+        },
+        "variables": {
+          "type": "object",
+          "description": "Template token values.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer",
+              "boolean"
+            ]
+          }
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "LOW",
+            "NORMAL",
+            "HIGH"
+          ]
+        },
+        "scheduledAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "If set, the notification service must not deliver this message after this timestamp. Use for time-sensitive alerts like OTPs and payment confirmations."
+        },
+        "retryPolicy": {
+          "type": "object",
+          "description": "Delivery retry configuration. If absent, the notification service applies its default policy.",
+          "additionalProperties": false,
+          "required": [
+            "maxAttempts",
+            "backoffSeconds"
+          ],
+          "properties": {
+            "maxAttempts": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Maximum delivery attempts including the first try."
+            },
+            "backoffSeconds": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Base delay in seconds between retries. Doubles on each attempt (exponential backoff)."
+            }
+          }
+        }
+      }
+    }
+  }
+}

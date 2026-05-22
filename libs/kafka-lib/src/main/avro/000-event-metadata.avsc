@@ -1,0 +1,69 @@
+{
+  "type": "record",
+  "name": "PulsePayEventMetadata",
+  "namespace": "dev.pulsepay.events",
+  "doc": "Common metadata envelope for all PulsePay Kafka events.",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Globally unique event identifier (UUID)."
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "doc": "Canonical event name e.g. PaymentCreated."
+    },
+    {
+      "name": "eventVersion",
+      "type": "int",
+      "doc": "Schema version. Consumers must reject versions they cannot handle and route to DLQ."
+    },
+    {
+      "name": "occurredAt",
+      "type": "string",
+      "doc": "RFC3339 timestamp of when the event occurred."
+    },
+    {
+      "name": "traceId",
+      "type": "string",
+      "doc": "Distributed trace ID propagated across services and Kafka headers."
+    },
+    {
+      "name": "producerService",
+      "type": "string",
+      "doc": "Microservice that published this event."
+    },
+    {
+      "name": "schemaId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Schema Registry subject + version reference e.g. payment-created-value:2. Populated by the producer base class."
+    },
+    {
+      "name": "correlationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Cross-service workflow correlation identifier."
+    },
+    {
+      "name": "environment",
+      "type": [
+        "null",
+        {
+          "type": "enum",
+          "name": "Environment",
+          "symbols": ["local", "dev", "staging", "production"]
+        }
+      ],
+      "default": null,
+      "doc": "Runtime environment. Prevents cross-environment event leakage."
+    },
+    {
+      "name": "tenantId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Optional multi-tenant identifier."
+    }
+  ]
+}

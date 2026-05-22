@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepay.dev/schemas/events/fraud-alert.schema.json",
+  "title": "FraudAlertEvent",
+  "description": "Event published when fraud rules flag a payment or account.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "payload"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "./event-metadata.schema.json"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alertId",
+        "paymentId",
+        "userId",
+        "severity",
+        "decision",
+        "riskScore",
+        "triggeredAt",
+        "ruleHits"
+      ],
+      "properties": {
+        "alertId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paymentId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Bank account or instrument ID being evaluated. Enables account-level velocity checks.",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "CRITICAL"
+          ]
+        },
+        "decision": {
+          "type": "string",
+          "description": "CHALLENGE triggers a step-up authentication (e.g. 3DS). REVIEW queues for manual inspection.",
+          "enum": [
+            "ALLOW",
+            "REVIEW",
+            "BLOCK",
+            "CHALLENGE"
+          ]
+        },
+        "riskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "triggeredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ruleHits": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "ruleCode",
+              "description",
+              "weight"
+            ],
+            "properties": {
+              "ruleCode": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

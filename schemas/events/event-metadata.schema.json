@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulsepay.dev/schemas/events/event-metadata.schema.json",
+  "title": "PulsePayEventMetadata",
+  "description": "Common metadata envelope for PulsePay domain events.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventId",
+    "eventType",
+    "eventVersion",
+    "occurredAt",
+    "traceId",
+    "producerService"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Globally unique event identifier.",
+      "minLength": 1
+    },
+    "eventType": {
+      "type": "string",
+      "description": "Canonical event name.",
+      "minLength": 1
+    },
+    "eventVersion": {
+      "type": "integer",
+      "description": "Monotonically increasing integer. Version 1 = initial schema. Consumers must check this field and reject or route to a dead-letter queue any version they have not been coded to handle. See CHANGELOG.md in this directory for the version-to-field mapping per event type.",
+      "minimum": 1
+    },
+    "schemaId": {
+      "type": "string",
+      "description": "Schema Registry subject + version reference, e.g. payment-created-value:3. Populated automatically by the kafka-lib producer base class. Consumers can use this to retrieve the exact schema from the registry.",
+      "minLength": 1
+    },
+    "environment": {
+      "type": "string",
+      "description": "Runtime environment that produced this event. Prevents cross-environment event leakage in shared Kafka clusters.",
+      "enum": [
+        "local",
+        "dev",
+        "staging",
+        "production"
+      ]
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC3339 timestamp for when the event occurred."
+    },
+    "traceId": {
+      "type": "string",
+      "description": "Distributed tracing identifier propagated across services.",
+      "minLength": 1
+    },
+    "correlationId": {
+      "type": "string",
+      "description": "Cross-service correlation identifier for workflows.",
+      "minLength": 1
+    },
+    "producerService": {
+      "type": "string",
+      "description": "Service that produced the event.",
+      "minLength": 1
+    },
+    "tenantId": {
+      "type": "string",
+      "description": "Optional multi-tenant identifier.",
+      "minLength": 1
+    }
+  }
+}
