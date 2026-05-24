@@ -1,0 +1,19 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "infra/docker/ledger-service/Dockerfile",
+    "watchPatterns": [
+      "services/payment-service/**",
+      "services/ledger-service/**",
+      "infra/docker/ledger-service/Dockerfile",
+      "infra/docker/reactor-pom.xml"
+    ]
+  },
+  "deploy": {
+    "healthcheckPath": "/actuator/health",
+    "healthcheckTimeout": 120,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}

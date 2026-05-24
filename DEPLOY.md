@@ -52,8 +52,15 @@ Replace `CONFLUENT_API_KEY` and `CONFLUENT_API_SECRET` with the real key and sec
 
 1. Create a new Railway project from the GitHub repo.
 2. Add a service for `payment-service`.
-3. Set the builder to Dockerfile.
-4. Set Dockerfile path:
+3. Use the repo root as the Railway root directory.
+4. Use the default Railway config file path:
+
+```text
+/railway.json
+```
+
+This file forces Railway to use Docker instead of auto-detecting the root Maven reactor.
+It points at this Dockerfile:
 
 ```text
 infra/docker/payment-service/Dockerfile
@@ -71,7 +78,7 @@ PULSEPAY_CORS_ALLOWED_ORIGINS=https://your-frontend-domain.example.com
 
 `SERVER_PORT` is optional on Railway because the app also reads Railway's `PORT`.
 
-6. Configure Railway health check path:
+6. Health checks are already configured in `railway.json`:
 
 ```text
 /actuator/health
@@ -82,8 +89,14 @@ PULSEPAY_CORS_ALLOWED_ORIGINS=https://your-frontend-domain.example.com
 ## Railway: ledger-service
 
 1. Add a second Railway service from the same GitHub repo.
-2. Set the builder to Dockerfile.
-3. Set Dockerfile path:
+2. Use the repo root as the Railway root directory.
+3. Set the Railway config file path to:
+
+```text
+/railway/ledger-service.json
+```
+
+This file points at this Dockerfile:
 
 ```text
 infra/docker/ledger-service/Dockerfile
@@ -98,7 +111,7 @@ SPRING_KAFKA_SASL_MECHANISM=PLAIN
 SPRING_KAFKA_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username="CONFLUENT_API_KEY" password="CONFLUENT_API_SECRET";
 ```
 
-5. Configure Railway health check path:
+5. Health checks are already configured in `railway/ledger-service.json`:
 
 ```text
 /actuator/health
@@ -106,15 +119,28 @@ SPRING_KAFKA_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginM
 
 6. A public domain is optional for `ledger-service`. It is useful for checking `/actuator/health`, but the service mainly runs as a Kafka consumer.
 
-## Optional Frontend Variable
+## Railway: frontend
 
-If deploying `pulsepay-frontend`, set:
+1. Add a third Railway service from the same GitHub repo.
+2. Set the Railway root directory to:
+
+```text
+/pulsepay-frontend
+```
+
+3. Set the Railway config file path to:
+
+```text
+/pulsepay-frontend/railway.json
+```
+
+4. Set:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=https://your-payment-service.up.railway.app
 ```
 
-Then update `payment-service`:
+5. Then update `payment-service`:
 
 ```env
 PULSEPAY_CORS_ALLOWED_ORIGINS=https://your-frontend-domain.example.com
