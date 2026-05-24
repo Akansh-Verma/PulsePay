@@ -15,6 +15,7 @@
 
     <modules>
         <module>libs/kafka-lib</module>
+        <module>pulsepay/common/common-lib</module>
         <module>services/wallet-service</module>
         <module>services/fraud-detection</module>
         <module>services/audit-service</module>
@@ -91,5 +92,15 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <!-- Minimal empty production profile to avoid build warnings when -Pproduction is used. -->
+    <profiles>
+        <profile>
+            <id>production</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
 
 </project>

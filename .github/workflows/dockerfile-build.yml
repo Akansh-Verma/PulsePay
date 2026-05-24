@@ -1,0 +1,41 @@
+name: Dockerfile-style Maven build verification
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  dockerfile-reactor-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Prepare reactor build context
+        run: |
+          # Copy only the services required by the slim reactor into the infra/docker context
+          mkdir -p infra/docker
+          cp -R services/payment-service infra/docker/services/
+          cp -R services/ledger-service infra/docker/services/
+
+      - name: Build payment-service (Dockerfile-style)
+        run: mvn -f infra/docker/reactor-pom.xml -B -pl services/payment-service package -DskipTests
+
+      - name: Build ledger-service (Dockerfile-style)
+        run: mvn -f infra/docker/reactor-pom.xml -B -pl services/ledger-service package -DskipTests
