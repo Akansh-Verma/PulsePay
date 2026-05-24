@@ -29,13 +29,15 @@ jobs:
 
       - name: Prepare reactor build context
         run: |
-          # Copy only the services required by the slim reactor into the infra/docker context
-          mkdir -p infra/docker
+          # Mirror the Dockerfile build context: reactor-pom.xml becomes pom.xml
+          # and service parent relativePath values resolve to ../../pom.xml.
+          mkdir -p infra/docker/services
+          cp infra/docker/reactor-pom.xml infra/docker/pom.xml
           cp -R services/payment-service infra/docker/services/
           cp -R services/ledger-service infra/docker/services/
 
       - name: Build payment-service (Dockerfile-style)
-        run: mvn -f infra/docker/reactor-pom.xml -B -pl services/payment-service package -DskipTests
+        run: mvn -f infra/docker/pom.xml -B -pl services/payment-service package -DskipTests
 
       - name: Build ledger-service (Dockerfile-style)
-        run: mvn -f infra/docker/reactor-pom.xml -B -pl services/ledger-service package -DskipTests
+        run: mvn -f infra/docker/pom.xml -B -pl services/ledger-service package -DskipTests
